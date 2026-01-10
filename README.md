@@ -18,4 +18,3 @@
 ![Concert Table](assets/oracle_concer_table.png)
 
 ## Architecture
-![MVC Diagram](assets/mvc_relationship.png)
