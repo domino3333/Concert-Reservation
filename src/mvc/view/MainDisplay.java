@@ -15,15 +15,16 @@ public class MainDisplay {
                 int menu = Integer.parseInt(input.nextLine());
                 switch (menu) {
                     case 1:
-                        //todo 회원 메뉴
+                        //회원 메뉴
                         new MemberDisplay().startMainDisplay();
                         break;
                     case 2:
-                        //todo 콘서트 메뉴
+                        //콘서트 메뉴
                         new ConcertDisplay().startMainDisplay();
                         break;
-                        //종료
+
                     case 3:
+                        //종료
                         exitFlag = true;
                         exitText();
                         break;

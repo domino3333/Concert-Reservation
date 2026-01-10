@@ -22,9 +22,8 @@ public class MemberDao {
         }
     }
 
-    public Member returnLatestRegisterMember() {
+    public Member returnLatestRegisterMember(Connection con) {
         PreparedStatement pstmt = null;
-        Connection con = null;
         ResultSet rs = null;
         Member temp = null;
 

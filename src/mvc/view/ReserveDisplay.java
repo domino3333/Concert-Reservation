@@ -23,30 +23,6 @@ public class ReserveDisplay {
 		return concertList.get(choice);
 	}
 
-	public boolean canReserve(Concert concert){
-
-
-		boolean isPossibleConcert = false;
-		int returnValue = new ReservationController().checkAge(concert);
-		switch (returnValue) {
-			case 1:
-				System.out.printf("[발라드 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concert.getName());
-				break;
-			case 2:
-				System.out.printf("[발라드 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concert.getName());
-				isPossibleConcert = true;
-				break;
-			case 3:
-				System.out.printf("[댄스 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concert.getName());
-				break;
-			case 4:
-				System.out.printf("[댄스 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concert.getName());
-				isPossibleConcert = true;
-				break;
-		}
-		return isPossibleConcert;
-	}
-
 	public String requestSeatNumber(){
 		// 좌석은 입력을 받고, 멤버는 레포에서 꺼내오기
 		System.out.print("원하는 좌석 번호를 미리 입력하세요 (예: A1): "); // 내가 예매해야 돼
@@ -124,5 +100,9 @@ public class ReserveDisplay {
 		for (int i = 0; i < concertList.size(); i++) {
 			System.out.println("         🎙  " + i + "번  🎙\n" + "\n" + concertList.get(i).toString());
 		}
+	}
+
+	public void printMessage(String s) {
+		System.out.println(s);
 	}
 }

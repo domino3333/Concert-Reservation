@@ -1,11 +1,13 @@
 package mvc.controller;
 
+import mvc.dto.ReservationDto;
 import mvc.model.Concert;
 import mvc.model.Member;
 import mvc.repository.ConcertDao;
 import mvc.repository.MemberDao;
 import mvc.service.ConcertService;
 import mvc.service.ReservationService;
+import mvc.view.ConcertDisplay;
 import mvc.view.ReserveDisplay;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class ReservationController {
 
 
     public Member returnMember(){
-        return new MemberDao().returnLatestRegisterMember();
+        return new ReservationService().returnLatestMember();
     }
 
     public List<Character> selectSeatIsAvailable(){
@@ -30,19 +32,25 @@ public class ReservationController {
     }
 
     public void callReserve(){
-        // 목록을 repo에서 가져와 보여주기
+        /*'나'라는 사용자는 하나의 콘서트만 예매 가능하다
+        reservationTable의 member_id(fk)가 unique인 것을 이용하여
+        현재 멤버가 이미 예매를 했다면 돌려보내는 과정이 필요*/
+        if(new ReservationService().isAlreadyReserved()>0){
+            new ReserveDisplay().printMessage("한 번에 하나의 콘서트만 예매할 수 있습니다.");
+            return;
+        }
 
         new ReserveDisplay().displayConcertList(); // 디스플레이로 넘겨서목록 보여주는 코드
         Concert selectedConcert = new ReserveDisplay().selectConcertDisplay(); //선택한 걸 받아오고
 
-        boolean isPossibleConcert = new ReserveDisplay().canReserve(selectedConcert);
+        boolean isPossibleConcert = new ReservationService().canReserve(selectedConcert);
 
 
         if (isPossibleConcert) {
             new ReserveDisplay().seatDisplay();
-            String myRequestSeat= new ReserveDisplay().requestSeatNumber(); // 원하는 자리 입력
+            String myRequestSeat = new ReserveDisplay().requestSeatNumber(); // 원하는 자리 입력
             new ReserveDisplay().reserveCountDown(); // 321 카운트다운
-            // 스트링 두개 받기) 따로 만들기 싫어서 억지로 +로 이어붙여서 넘겨받고 토큰화
+            // 스트링 두개 받기) 억지로 +로 이어붙여서 넘겨받고 토큰화
             StringTokenizer st = new StringTokenizer(myRequestSeat);
             String mySeat = st.nextToken().trim().toUpperCase();
             String myName = st.nextToken().trim();
@@ -57,8 +65,14 @@ public class ReservationController {
                 }
 
                 //todo 내 콘서트 예매 정보 reservation 테이블에 넣기
-                new ReservationService().insertMyReservationInfo(mySeat,myName,selectedConcert);
+                int rowCount = new ReservationService().insertMyReservationInfo(mySeat,myName,selectedConcert);
 
+                if(rowCount >0){
+                    new ConcertDisplay().insertResultMessage("내 예매 정보가 저장되었습니다.");
+                }else{
+                    new ConcertDisplay().insertResultMessage("내 예매 정보 저장 실패");
+
+                }
 
                 new ReserveDisplay().deadLineDisplay();
                 Thread.sleep(1000); // 메시지 출력 후 1초 대기(사용자가 읽을 시간)
@@ -66,11 +80,15 @@ public class ReservationController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }else{
+            System.out.println();
         }
 
     }
 
-    public int checkAge(Concert concert) {
-        return new ReservationService().checkAgeBeforeReserve(concert);
+    public void reservationHistory() {
+        ReservationDto dto = new ReservationService().reservationHistory();
+        new ConcertDisplay().viewReservationHistory(dto);
+
     }
 }

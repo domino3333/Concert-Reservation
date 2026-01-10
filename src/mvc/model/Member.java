@@ -9,7 +9,6 @@ public class Member {
     private Date joinDate;
     private int memberId;
     private Concert concert;
-    private String mySeat;
 
     public Member() {
         this(null, 0, null);
@@ -21,7 +20,6 @@ public class Member {
         this.age = age;
         this.joinDate = joinDate;
         this.concert = null;
-        this.mySeat = null;
     }
 
     public Date getJoinDate() {
@@ -46,14 +44,6 @@ public class Member {
 
     public void setConcert(Concert concert) {
         this.concert = concert;
-    }
-
-    public String getMySeat() {
-        return mySeat;
-    }
-
-    public void setMySeat(String mySeat) {
-        this.mySeat = mySeat;
     }
 
     public String getName() {

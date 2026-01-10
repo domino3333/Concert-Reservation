@@ -1,11 +1,14 @@
 package mvc.service;
 
 import mvc.common.JDBCTemplate;
+import mvc.controller.ReservationController;
+import mvc.dto.ReservationDto;
 import mvc.model.*;
 import mvc.repository.MemberDao;
 import mvc.repository.ReservationDao;
 import mvc.repository.SeatDao;
 import mvc.task.CustomerTask;
+import oracle.jdbc.replay.ConnectionInitializationCallback;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -26,6 +29,11 @@ public class ReservationService {
         return rs;
     }
 
+
+
+
+
+
     /**
      * 손님과 내가 자리예매할 때 진입하는 동기화 함수
      *
@@ -33,6 +41,8 @@ public class ReservationService {
      * @param customerName: 예매자 이름
      */
     public synchronized void reserveSeat(String seatNumber, String customerName) {
+
+        Connection con = null;
 
         while (isReserving) {
             System.out.println("다른 사람이 예매 중입니다. 잠시만 기다려주세요.");
@@ -47,15 +57,22 @@ public class ReservationService {
         isReserving = true;
         long ran = (long) (Math.random() * (2000 - 1650 + 1) + 1650);
         try {
-            System.out.println(customerName + "님이" + seatNumber + " 예약중..");
+            con = JDBCTemplate.getConnection();
+            System.out.println(customerName + "님이 " + seatNumber + " 예약중..");
             Thread.sleep(ran);
             //체크해야됨
-            int rowCount = new SeatDao().updateAvailable(seatNumber, customerName);
+            int rowCount = new SeatDao().updateAvailable(seatNumber, customerName,con);
             if (rowCount > 0) {
-                System.out.println(customerName + "님" + seatNumber + " 예매 완료!");
+                System.out.println(customerName + "님 " + seatNumber + " 예매 완료!");
+                JDBCTemplate.commit(con);
+
+
+
             } else {
-                //예약 불가능, 그냥 실패 때림
+                //예약 불가능, 그냥 실패
                 System.out.println("이미 예약된 좌석입니다." + customerName + "님 예약 실패");
+                JDBCTemplate.rollback(con);
+
             }
 
             System.out.println();
@@ -101,10 +118,36 @@ public class ReservationService {
         return customerArr;
     }
 
+    public boolean canReserve(Concert concert){
+
+
+        boolean isPossibleConcert = false;
+        int returnValue = checkAgeBeforeReserve(concert);
+        switch (returnValue) {
+            case 1:
+                System.out.printf("[발라드 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concert.getName());
+                break;
+            case 2:
+                System.out.printf("[발라드 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concert.getName());
+                isPossibleConcert = true;
+                break;
+            case 3:
+                System.out.printf("[댄스 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concert.getName());
+                break;
+            case 4:
+                System.out.printf("[댄스 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concert.getName());
+                isPossibleConcert = true;
+                break;
+        }
+        return isPossibleConcert;
+    }
+
+
     // 예매 시 나이 제한 체크
     public int checkAgeBeforeReserve(Concert concert) {
+        Connection con = JDBCTemplate.getConnection();
         //최근 가입 회원 나이 가져오기
-        int memberAge = new MemberDao().returnLatestRegisterMember().getAge();
+        int memberAge = new MemberDao().returnLatestRegisterMember(con).getAge();
 
         if (concert instanceof BalladConcert temp) {
             if (temp.getAccessAge() > memberAge) {
@@ -160,9 +203,8 @@ public class ReservationService {
         Member m = new Member();
         m.setName(myName);
         m.setConcert(selectedConcert);
-        m.setMySeat(mySeat);
 
-        int rowCount = new ReservationDao().insertMyReservationInfo(con, m);
+        int rowCount = new ReservationDao().insertMyReservationInfo(con, m,mySeat);
         if (rowCount > 0) {
             JDBCTemplate.commit(con);
         } else {
@@ -175,6 +217,31 @@ public class ReservationService {
         return rowCount;
 
 
+    }
+
+    public int isAlreadyReserved() {
+        Connection con = JDBCTemplate.getConnection();
+        int num = new ReservationDao().isAlreadyReserved(con);
+        JDBCTemplate.close(con);
+        return num;
+
+    }
+
+    public ReservationDto reservationHistory() {
+        Connection con = JDBCTemplate.getConnection();
+        ReservationDto dto = new ReservationDao().selectReservationHistory(con);
+        JDBCTemplate.close(con);
+
+        return dto;
+
+    }
+
+    public Member returnLatestMember() {
+        Connection con = JDBCTemplate.getConnection();
+        Member member = new MemberDao().returnLatestRegisterMember(con);
+        JDBCTemplate.close(con);
+
+        return member;
     }
 }
 

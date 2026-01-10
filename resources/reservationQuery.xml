@@ -7,5 +7,8 @@
     <entry key="insertMyReservationInfo">insert into reservation values(res_seq.nextval,?,?,?,sysdate,sysdate)</entry>
     <entry key="selectMemberId">select member_id from (select * from member order by join_date desc) where rownum = 1</entry>
     <entry key="selectConcertId">select concert_id from concert where name = ?</entry>
+    <entry key="isMemberAlreadyInReservation"> SELECT 1 as "result" FROM reservation WHERE member_id = ? FETCH FIRST 1 ROWS ONLY</entry>
+    <entry key="joinMyReservationInfo">select RESERVATION_ID,M.MEMBER_ID,C.CONCERT_ID,MY_SEAT,RESERVATION_DATE,CANCELLED_DATE ,M.NAME as "USER_NAME",AGE,JOIN_DATE,C.name as "CONCERT_NAME",GENRE,ACCESS_AGE from reservation R join member M on M.member_id=R.member_id join concert C on C.concert_id=R.concert_id where M.member_id=?</entry>
+
 
 </properties>

@@ -59,14 +59,11 @@ public class SeatDao {
         return charList;
     }
 
-    public int updateAvailable(String seatNumber, String customerName) {
+    public int updateAvailable(String seatNumber, String customerName,Connection con) {
         int rowCount = 0;
-        Connection con = null;
         PreparedStatement pstmt = null;
 
         try {
-            con = JDBCTemplate.getConnection();
-            con.setAutoCommit(false);
 
             String query = prop.getProperty("updateAvailable");
             pstmt = con.prepareStatement(query);
@@ -74,12 +71,6 @@ public class SeatDao {
             pstmt.setString(2, seatNumber);
 
             rowCount = pstmt.executeUpdate();
-
-            if (rowCount > 0) {
-                con.commit();
-            } else {
-                con.rollback();
-            }
 
         } catch (SQLException e) {
             e.printStackTrace();
