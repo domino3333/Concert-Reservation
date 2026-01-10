@@ -3,14 +3,10 @@ package mvc.controller;
 import mvc.dto.ReservationDto;
 import mvc.model.Concert;
 import mvc.model.Member;
-import mvc.repository.ConcertDao;
-import mvc.repository.MemberDao;
-import mvc.service.ConcertService;
 import mvc.service.ReservationService;
 import mvc.view.ConcertDisplay;
 import mvc.view.ReserveDisplay;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -68,9 +64,9 @@ public class ReservationController {
                 int rowCount = new ReservationService().insertMyReservationInfo(mySeat,myName,selectedConcert);
 
                 if(rowCount >0){
-                    new ConcertDisplay().insertResultMessage("내 예매 정보가 저장되었습니다.");
+                    new ConcertDisplay().resultMessage("내 예매 정보가 저장되었습니다.");
                 }else{
-                    new ConcertDisplay().insertResultMessage("내 예매 정보 저장 실패");
+                    new ConcertDisplay().resultMessage("내 예매 정보 저장 실패");
 
                 }
 

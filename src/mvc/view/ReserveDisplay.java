@@ -4,6 +4,7 @@ import mvc.controller.ReservationController;
 import mvc.model.Concert;
 import mvc.run.Run;
 import mvc.service.ConcertService;
+import mvc.util.DisplayUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,9 @@ import java.util.Scanner;
 
 import static mvc.service.ReservationService.*;
 
-public class ReserveDisplay {
+public class ReserveDisplay extends DisplayUtil {
 
-	public Scanner input = new Scanner(System.in);
+	public Scanner input = super.getScanner();
 	List<Concert> concertList = new ArrayList<>(new ConcertService().returnAllConcerts());
 
 	public Concert selectConcertDisplay(){
@@ -57,13 +58,10 @@ public class ReserveDisplay {
 
 	public void seatDisplay() {
 		// 좌석 화면 보여주기
-		//System.out.println("=============좌석 현황=============");
 		System.out.println();
-		
-		
-		System.out.println(" ------------------------------");
-		System.out.println(" 🎞       현재 좌석 현황        🎞");
-		System.out.println(" ------------------------------");
+		super.dottedLine();
+		super.mainTitleText("현재 좌석 현황");
+		super.dottedLine();
 		System.out.println(" □ : 사용 가능");
 		System.out.println(" ■ : 사용 불가");
 		System.out.println();
@@ -102,7 +100,4 @@ public class ReserveDisplay {
 		}
 	}
 
-	public void printMessage(String s) {
-		System.out.println(s);
-	}
 }

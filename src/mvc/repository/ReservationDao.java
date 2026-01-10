@@ -185,7 +185,7 @@ public class ReservationDao {
                         rs2.getInt("ACCESS_AGE")
                 );
             } else {
-                System.out.println("해당 회원의 예약 내역이 없습니다.");
+                System.out.println("해당 회원의 예매 내역이 없습니다.");
             }
 
 

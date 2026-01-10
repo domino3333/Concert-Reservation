@@ -1,16 +1,16 @@
 package mvc.view;
 
-import java.util.List;
 import java.util.Scanner;
 
-import mvc.controller.ConcertController;
 import mvc.controller.MemberController;
-import mvc.model.Concert;
+import mvc.util.DisplayUtil;
 
-public class MemberDisplay {
+public class MemberDisplay extends DisplayUtil {
 
 	public Scanner input = new Scanner(System.in);
-
+	private final String[] MENU_ARR = new String[]{
+			" 1. 회원 정보 입력"," 9. 종료"
+	};
 
 	public void startMainDisplay(){
 		boolean exitFlag = false;
@@ -26,13 +26,13 @@ public class MemberDisplay {
 					case 9:
 						// 종료
 						exitFlag = true;
-						new MainDisplay().exitText();
+						super.exitText("회원 페이지");
 						break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				exceptionText();
-				ln();
+				super.exceptionText();
+				super.ln();
 			}
 
 		}
@@ -40,29 +40,14 @@ public class MemberDisplay {
 
 	public void mainUIofMemberDisplay() {
 
-		System.out.println("┌──────────────────────────────┐");
-		System.out.println("         회원 관리 메뉴     ");
-		System.out.println("└──────────────────────────────┘");
-		System.out.println(" 1. 회원 정보 입력");
-		System.out.println(" 9. 종료");
-		System.out.println(" ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-		System.out.print(" 메뉴 번호 입력:");
+		super.topBorder();
+		super.mainTitleText("회원 관리 메뉴");
+		super.bottomBorder();
+		super.receiveMenuArrAndPrint(MENU_ARR);
+		super.solidLine();
+		super.selectMenuView();
 
 	}
-	
-	public void exceptionText() {
-		System.out.println("유효한 키를 입력해주세요. 부탁드립니다ㅠㅜ");
-	}
-	public void ln() {
-		System.out.println();
-	}
-
-
-	public void insertResultMessage(String message){
-		System.out.println(message);
-
-	}
-
 
 	public void insertMyInfo() {
 		System.out.print("이름 입력:");
@@ -72,8 +57,7 @@ public class MemberDisplay {
 
 		new MemberController().insertMember(name,age);
 		System.out.println(name+"님 안녕하세요!");
-		
-		
+
 	}
 
 }
