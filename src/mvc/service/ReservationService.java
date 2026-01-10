@@ -1,10 +1,14 @@
 package mvc.service;
 
+import mvc.common.JDBCTemplate;
 import mvc.model.*;
 import mvc.repository.MemberDao;
+import mvc.repository.ReservationDao;
 import mvc.repository.SeatDao;
 import mvc.task.CustomerTask;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -12,18 +16,20 @@ public class ReservationService {
 
     public static final int SEAT_ROW = 5;
     public static final int SEAT_COL = 5;
+    private final static ReservationService rs = new ReservationService();
     public final int CUSTOMER_COUNT = 10;
     public final String[] CUSTOMER_NAME = {"김길동", "성시경", "브라이언", "김득춘", "저길동", "김점순", "장그래", "폴 킴", "최길숙", "전상훈",
             "김할머니", "김정김", "동글이", "손철수", "김할아버지", "짱구", "강주연", "최이슬", "수지", "존박", "박명수", "정준하"};
     private boolean isReserving = false;
 
-    private final static ReservationService rs = new ReservationService();
-    public static ReservationService getInstance(){
+    public static ReservationService getInstance() {
         return rs;
     }
+
     /**
      * 손님과 내가 자리예매할 때 진입하는 동기화 함수
-     * @param seatNumber: 원하는 자리
+     *
+     * @param seatNumber:   원하는 자리
      * @param customerName: 예매자 이름
      */
     public synchronized void reserveSeat(String seatNumber, String customerName) {
@@ -75,6 +81,7 @@ public class ReservationService {
 
     /**
      * 손님 초기화(랜덤자리배정,
+     *
      * @return 손님 배열
      */
     public Customer[] initCustomer() {
@@ -113,15 +120,18 @@ public class ReservationService {
         }
     }
 
-    public void customerReservationThreadStart() {
+    public List<Thread> customerReservationThreadStart() {
+        List<Thread> customerThread = new ArrayList<>();
         for (Customer c : initCustomer()) {
-            new Thread(new CustomerTask(c)).start();
-
+            Thread t = new Thread(new CustomerTask(c));
+            t.start();
+            customerThread.add(t);
         }
+        return customerThread;
     }
 
-    public void myReservationThreadStart(String mySeat, String myName) {
-        new Thread(() -> {
+    public Thread myReservationThreadStart(String mySeat, String myName) {
+        Thread myThread = new Thread(() -> {
             long ran = (long) (Math.random() * 499);
             try {
                 Thread.sleep(ran);
@@ -129,15 +139,42 @@ public class ReservationService {
                 e.printStackTrace();
             }
             reserveSeat(mySeat, myName);
-        }).start();
-    }
+        });
+        myThread.start();
 
-    public void customerEntered() {
-        customerReservationThreadStart();
+        return myThread;
+
     }
 
     public List<Character> selectSeatIsAvailable() {
         return new SeatDao().isAvailableSeat();
+    }
+
+    public int insertMyReservationInfo(String mySeat, String myName, Concert selectedConcert) {
+
+        Connection con = JDBCTemplate.getConnection();
+
+
+        //todo 내 정보 안에 concert객체 하나 갖고있어야 함
+        // 그걸 여기서 new로 만들어 넘겨
+        Member m = new Member();
+        m.setName(myName);
+        m.setConcert(selectedConcert);
+        m.setMySeat(mySeat);
+
+        int rowCount = new ReservationDao().insertMyReservationInfo(con, m);
+        if (rowCount > 0) {
+            JDBCTemplate.commit(con);
+        } else {
+            JDBCTemplate.rollback(con);
+
+        }
+
+        JDBCTemplate.close(con);
+
+        return rowCount;
+
+
     }
 }
 

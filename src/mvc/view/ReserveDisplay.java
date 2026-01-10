@@ -3,7 +3,9 @@ package mvc.view;
 import mvc.controller.ReservationController;
 import mvc.model.Concert;
 import mvc.run.Run;
+import mvc.service.ConcertService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,31 +14,36 @@ import static mvc.service.ReservationService.*;
 public class ReserveDisplay {
 
 	public Scanner input = new Scanner(System.in);
+	List<Concert> concertList = new ArrayList<>(new ConcertService().returnAllConcerts());
 
+	public Concert selectConcertDisplay(){
 
-	public boolean selectConcertDisplay(List<Concert> concertList){
 		System.out.print("예매할 콘서트를 선택해주세요(0~8):");
 		int choice = Integer.parseInt(input.nextLine());
+		return concertList.get(choice);
+	}
+
+	public boolean canReserve(Concert concert){
+
 
 		boolean isPossibleConcert = false;
-		int returnValue = new ReservationController().checkAge(concertList.get(choice));
+		int returnValue = new ReservationController().checkAge(concert);
 		switch (returnValue) {
 			case 1:
-				System.out.printf("[발라드 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concertList.get(choice).getName());
+				System.out.printf("[발라드 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concert.getName());
 				break;
 			case 2:
-				System.out.printf("[발라드 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concertList.get(choice).getName());
+				System.out.printf("[발라드 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concert.getName());
 				isPossibleConcert = true;
 				break;
 			case 3:
-				System.out.printf("[댄스 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concertList.get(choice).getName());
+				System.out.printf("[댄스 콘서트] %s는 나이제한으로 예매가 불가능합니다.\n", concert.getName());
 				break;
 			case 4:
-				System.out.printf("[댄스 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concertList.get(choice).getName());
+				System.out.printf("[댄스 콘서트] %s는 예매가 가능합니다.\n이어서 좌석을 선택해주세요.\n", concert.getName());
 				isPossibleConcert = true;
 				break;
 		}
-
 		return isPossibleConcert;
 	}
 
@@ -45,8 +52,8 @@ public class ReserveDisplay {
 		System.out.print("원하는 좌석 번호를 미리 입력하세요 (예: A1): "); // 내가 예매해야 돼
 		String mySeat = input.nextLine().toUpperCase();
 		String myName = new ReservationController().returnMember().getName();
-
 		return mySeat+" "+myName;
+
 	}
 
 	public void deadLineDisplay(){
@@ -113,9 +120,9 @@ public class ReserveDisplay {
 
 	}
 
-	public void displayConcertList(List<Concert> list) {
-		for (int i = 0; i < list.size(); i++) {
-			System.out.println("         🎙  " + i + "번  🎙\n" + "\n" + list.get(i).toString());
+	public void displayConcertList() {
+		for (int i = 0; i < concertList.size(); i++) {
+			System.out.println("         🎙  " + i + "번  🎙\n" + "\n" + concertList.get(i).toString());
 		}
 	}
 }

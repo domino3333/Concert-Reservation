@@ -25,7 +25,7 @@ public class ConcertService {
         Connection con = JDBCTemplate.getConnection();
 
 
-        int rowCountValue = 0; // 성/실 플래그
+        int rowCountValue = 0; //
 
         List<Concert> concertList = new ArrayList<>();
 

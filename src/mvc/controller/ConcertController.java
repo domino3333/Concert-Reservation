@@ -3,7 +3,8 @@ package mvc.controller;
 import mvc.model.Concert;
 import mvc.repository.ConcertDao;
 import mvc.service.ConcertService;
-import mvc.view.MenuDisplay;
+import mvc.view.ConcertDisplay;
+import mvc.view.MemberDisplay;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -12,9 +13,9 @@ public class ConcertController {
 
     public void insertConcert() {
         if (new ConcertService().insertConcert()>0) {
-            new MenuDisplay().insertResultMessage("콘서트 Insert 성공");
+            new ConcertDisplay().insertResultMessage("콘서트 Insert 성공");
         } else {
-            new MenuDisplay().insertResultMessage("콘서트 Insert 실패");
+            new ConcertDisplay().insertResultMessage("콘서트 Insert 실패");
         }
     }
 

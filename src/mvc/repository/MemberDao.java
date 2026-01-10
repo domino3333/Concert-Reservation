@@ -69,7 +69,6 @@ public class MemberDao {
             pstmt.setInt(2, age);
 
             rowCount = pstmt.executeUpdate();
-            System.out.println(rowCount);
 
         } catch (SQLException e) {
             e.printStackTrace();

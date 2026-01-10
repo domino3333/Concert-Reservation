@@ -31,10 +31,11 @@ public class ReservationController {
 
     public void callReserve(){
         // 목록을 repo에서 가져와 보여주기
-        List<Concert> concertList = new ArrayList<>(new ConcertService().returnAllConcerts());
 
-        new ReserveDisplay().displayConcertList(concertList); // 디스플레이로 넘겨서목록 보여주는 코드
-        boolean isPossibleConcert = new ReserveDisplay().selectConcertDisplay(concertList);
+        new ReserveDisplay().displayConcertList(); // 디스플레이로 넘겨서목록 보여주는 코드
+        Concert selectedConcert = new ReserveDisplay().selectConcertDisplay(); //선택한 걸 받아오고
+
+        boolean isPossibleConcert = new ReserveDisplay().canReserve(selectedConcert);
 
 
         if (isPossibleConcert) {
@@ -47,10 +48,18 @@ public class ReservationController {
             String myName = st.nextToken().trim();
 
             //손님입장, 나 입장
-            rs.myReservationThreadStart(mySeat,myName); // 나입장
-            rs.customerEntered(); // 손님입장
+            Thread myThread = rs.myReservationThreadStart(mySeat,myName); // 내 스레드 시작
+            List<Thread> customerThread = rs.customerReservationThreadStart(); // 손님 스레드 시작
             try {
-                Thread.sleep(24000);  // 메인스레드는 대기
+                myThread.join(); // 내 스레드 기다려주기
+                for(Thread t :customerThread){
+                    t.join(); // 손님 스레드 기다려주기
+                }
+
+                //todo 내 콘서트 예매 정보 reservation 테이블에 넣기
+                new ReservationService().insertMyReservationInfo(mySeat,myName,selectedConcert);
+
+
                 new ReserveDisplay().deadLineDisplay();
                 Thread.sleep(1000); // 메시지 출력 후 1초 대기(사용자가 읽을 시간)
 

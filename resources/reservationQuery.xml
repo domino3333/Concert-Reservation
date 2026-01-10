@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+    <comment>reservation Query</comment>
+
+    <entry key="insertMyReservationInfo">insert into reservation values(res_seq.nextval,?,?,?,sysdate,sysdate)</entry>
+    <entry key="selectMemberId">select member_id from (select * from member order by join_date desc) where rownum = 1</entry>
+    <entry key="selectConcertId">select concert_id from concert where name = ?</entry>
+
+</properties>

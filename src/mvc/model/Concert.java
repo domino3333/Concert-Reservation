@@ -10,6 +10,14 @@ public class Concert {
     private String name;
     private ConcertGenre genre;
 
+    public int getConcertId() {
+        return concertId;
+    }
+
+    public void setConcertId(int concertId) {
+        this.concertId = concertId;
+    }
+
     public Concert() {
         this(null, null, 0);
     }
