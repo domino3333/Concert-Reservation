@@ -28,12 +28,6 @@ public class ReservationService {
     public static ReservationService getInstance() {
         return rs;
     }
-
-
-
-
-
-
     /**
      * 손님과 내가 자리예매할 때 진입하는 동기화 함수
      *
@@ -58,19 +52,17 @@ public class ReservationService {
         long ran = (long) (Math.random() * (2000 - 1650 + 1) + 1650);
         try {
             con = JDBCTemplate.getConnection();
-            System.out.println(customerName + "님이 " + seatNumber + " 예약중..");
+            System.out.println(customerName + "님이 " + seatNumber + " 예매중..");
             Thread.sleep(ran);
             //체크해야됨
             int rowCount = new SeatDao().updateAvailable(seatNumber, customerName,con);
             if (rowCount > 0) {
                 System.out.println(customerName + "님 " + seatNumber + " 예매 완료!");
+                //예매 완료 시 바로바로 commit
                 JDBCTemplate.commit(con);
-
-
-
             } else {
                 //예약 불가능, 그냥 실패
-                System.out.println("이미 예약된 좌석입니다." + customerName + "님 예약 실패");
+                System.out.println("이미 예매된 좌석입니다." + customerName + "님 예매 실패");
                 JDBCTemplate.rollback(con);
 
             }
@@ -196,10 +188,6 @@ public class ReservationService {
     public int insertMyReservationInfo(String mySeat, String myName, Concert selectedConcert) {
 
         Connection con = JDBCTemplate.getConnection();
-
-
-        //todo 내 정보 안에 concert객체 하나 갖고있어야 함
-        // 그걸 여기서 new로 만들어 넘겨
         Member m = new Member();
         m.setName(myName);
         m.setConcert(selectedConcert);
@@ -211,12 +199,9 @@ public class ReservationService {
             JDBCTemplate.rollback(con);
 
         }
-
         JDBCTemplate.close(con);
 
         return rowCount;
-
-
     }
 
     public int isAlreadyReserved() {
@@ -224,7 +209,6 @@ public class ReservationService {
         int num = new ReservationDao().isAlreadyReserved(con);
         JDBCTemplate.close(con);
         return num;
-
     }
 
     public ReservationDto reservationHistory() {
@@ -243,6 +227,7 @@ public class ReservationService {
 
         return member;
     }
+
 }
 
 

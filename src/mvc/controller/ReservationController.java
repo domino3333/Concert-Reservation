@@ -30,7 +30,10 @@ public class ReservationController {
     public void callReserve(){
         /*'나'라는 사용자는 하나의 콘서트만 예매 가능하다
         reservationTable의 member_id(fk)가 unique인 것을 이용하여
-        현재 멤버가 이미 예매를 했다면 돌려보내는 과정이 필요*/
+        현재 멤버가 이미 예매를 했다면 돌려보내는 과정이 필요
+        결론) reservation 테이블에 현재 로그인된 회원의 member_id가 존재한다면(이미 예매했다면) 돌려보냄
+        member_id로 검사할 수 있는 이유는 membㄷr_id가 unique key이기 때문
+        */
         if(new ReservationService().isAlreadyReserved()>0){
             new ReserveDisplay().printMessage("한 번에 하나의 콘서트만 예매할 수 있습니다.");
             return;
@@ -85,6 +88,8 @@ public class ReservationController {
     public void reservationHistory() {
         ReservationDto dto = new ReservationService().reservationHistory();
         new ConcertDisplay().viewReservationHistory(dto);
-
     }
+
+    //todo 회원 삭제 시 reservation테이블에서 Y로 바꾸기
+
 }

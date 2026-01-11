@@ -26,6 +26,13 @@ public class ReservationDao {
     }
 
 
+    /**
+     * 가장 최근에 등록된 회원의 member_id를 가져온다
+     * member_id를 reservation테이블에 넘겨서
+     * 이 member_id가 reservation테이블에 있는지 검사함
+     * @param
+     * @return: 이미 회원이 예매를 한 상태라면 1 반환
+     */
     public int isAlreadyReserved(Connection con) {
         PreparedStatement pstmt1 = null;
         PreparedStatement pstmt2 = null;
@@ -34,7 +41,7 @@ public class ReservationDao {
         int memberId = 0;
         int resultNum = 0;
         try {
-            String query1 = prop.getProperty("selectMemberId");
+            String query1 = prop.getProperty("selectLatestMemberId");
             pstmt1 = con.prepareStatement(query1);
             rs1 = pstmt1.executeQuery();
             if (rs1.next()) {
@@ -54,8 +61,6 @@ public class ReservationDao {
             if (rs2.next()) {
                 //회원이 이미 예매를 했다면 1반환
                 resultNum = rs2.getInt("result");
-            } else {
-                resultNum = 0;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -66,13 +71,15 @@ public class ReservationDao {
 
 
     /**
-     * 내 예매 정보 인서트
-     *
-     * @param con
-     * @param member
-     * @return
+     * 가장 최근에 등록된 회원의 member_id를 가져온다.
+     * member안에 넘겨받은 concert의 id를 가져온다
+     * 위의 두 쿼리의 결과를 기반으로 reservation 테이블에 삽입
+     * @param member : concert가 담겨져 있음
+     * @param mySeat : view에서 입력받은 seatNumber
+     * @return rowCount
      */
     public int insertMyReservationInfo(Connection con, Member member, String mySeat) {
+        //FIXME member에 concert 변수 넣은 것도 불필요해 보임, 그냥 concert로 넘겨받아도 ok
 
         int rowCount = 0;
         PreparedStatement pstmt1 = null;
@@ -82,13 +89,13 @@ public class ReservationDao {
         ResultSet rs2 = null;
         int memberId = -1;
         int concertId = -1;
+        //FIXME 사실 이 세 덩어리를 나눠서 reservation service에서 트랜잭션으로 관리하는 게 좋을거같긴한데
 
         //멤버에 있는 콘서트의 아이디로 디비에 있는 id랑 맞춰서
         //concertId를 가져와야해
         try {
-
             //db에서 가장 최근에 가입한 멤버의 id 가져오기
-            String query1 = prop.getProperty("selectMemberId");
+            String query1 = prop.getProperty("selectLatestMemberId");
             pstmt1 = con.prepareStatement(query1);
             rs1 = pstmt1.executeQuery();
             if (rs1.next()) {
@@ -109,7 +116,7 @@ public class ReservationDao {
             }
 
 
-            // 위 두 쿼리를 기반으로 내 예매정보를 테이블에 삽입
+            // 위 두 쿼리의 결과를 기반으로 내 예매정보를 테이블에 삽입
             String query2 = prop.getProperty("insertMyReservationInfo");
             pstmt2 = con.prepareStatement(query2);
 
@@ -129,11 +136,16 @@ public class ReservationDao {
             JDBCTemplate.close(pstmt2);
             JDBCTemplate.close(pstmt3);
         }
-
-
         return rowCount;
     }
 
+
+    /**
+     * 내 예매 내역을 불러오는 함수
+     * 가장 최근에 등록된 회원의 member_id를 가져온다.
+     *     (member) <----reservation---->(concert)로 조인하여 select
+     * @return 예매 내역을 DTO로 만들어서 반환
+     */
     public ReservationDto selectReservationHistory(Connection con) {
 
         PreparedStatement pstmt1 = null;
@@ -143,7 +155,7 @@ public class ReservationDao {
         int memberIdForQuery = 0;
         ReservationDto dto = null;
         try {
-            String query1 = prop.getProperty("selectMemberId");
+            String query1 = prop.getProperty("selectLatestMemberId");
             pstmt1 = con.prepareStatement(query1);
             rs1 = pstmt1.executeQuery();
             if (rs1.next()) {
@@ -201,4 +213,5 @@ public class ReservationDao {
         return dto;
 
     }
+
 }

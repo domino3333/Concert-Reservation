@@ -6,7 +6,7 @@ import java.sql.Date;
 
 
 /**
- * 예매 내역 조회용 DTO
+ * 예매 내역 JOIN 조회용 DTO
  */
 public class ReservationDto {
 

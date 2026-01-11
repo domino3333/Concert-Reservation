@@ -49,7 +49,7 @@ public class MainDisplay extends DisplayUtil {
         super.mainTitleText("메인 화면");
         super.bottomBorder();
         super.receiveMenuArrAndPrint(MENU_ARR);
-        super.solidLine();
+        super.shortSolidLine();
         super.selectMenuView();
 
     }

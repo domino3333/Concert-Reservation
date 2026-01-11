@@ -26,6 +26,11 @@ public class SeatDao {
         }
     }
 
+
+    /**
+     * view에 현재 좌석 현황을 그리기 위해 seat이 이용 가능한지 체크하는 함수
+     * @return db로부터 받아온 T/F 를 배열로 만들어 반환
+     */
     public List<Character> isAvailableSeat() {
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -59,6 +64,14 @@ public class SeatDao {
         return charList;
     }
 
+
+    /**
+     * 자리 예매 완료 시, 자리를 F로 update 해주는 함수
+     * @param seatNumber 자리 string (예:A3)
+     * @param customerName 고객의 이름
+     * @param con
+     * @return rowCount
+     */
     public int updateAvailable(String seatNumber, String customerName,Connection con) {
         int rowCount = 0;
         PreparedStatement pstmt = null;

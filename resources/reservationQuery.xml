@@ -2,13 +2,56 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties>
+
+    <!--     < reservation 쿼리 >
+    칼럼:
+    RESERVATION_ID  NOT NULL NUMBER
+    MEMBER_ID                NUMBER
+    CONCERT_ID               NUMBER
+    MY_SEAT                  VARCHAR2(2)
+    RESERVATION_DATE          TIMESTAMP(6)
+    CANCELLED_DATE           TIMESTAMP(6)
+    -->
+
     <comment>reservation Query</comment>
 
-    <entry key="insertMyReservationInfo">insert into reservation values(res_seq.nextval,?,?,?,sysdate,sysdate)</entry>
-    <entry key="selectMemberId">select member_id from (select * from member order by join_date desc) where rownum = 1</entry>
-    <entry key="selectConcertId">select concert_id from concert where name = ?</entry>
-    <entry key="isMemberAlreadyInReservation"> SELECT 1 as "result" FROM reservation WHERE member_id = ? FETCH FIRST 1 ROWS ONLY</entry>
-    <entry key="joinMyReservationInfo">select RESERVATION_ID,M.MEMBER_ID,C.CONCERT_ID,MY_SEAT,RESERVATION_DATE,CANCELLED_DATE ,M.NAME as "USER_NAME",AGE,JOIN_DATE,C.name as "CONCERT_NAME",GENRE,ACCESS_AGE from reservation R join member M on M.member_id=R.member_id join concert C on C.concert_id=R.concert_id where M.member_id=?</entry>
+
+    <entry key="insertMyReservationInfo">
+        insert into reservation values(res_seq.nextval,?,?,?,sysdate,sysdate)
+    </entry>
+
+    <!--가장 최근에 등록된 회원의 Member_id select-->
+    <entry key="selectLatestMemberId">
+        select member_id from (select * from member order by join_date desc) where rownum = 1
+    </entry>
+
+    <entry key="selectConcertId">
+        select concert_id from concert where name = ?
+    </entry>
+
+    <!-- 해당 member_id가 reservation 테이블에 있는지 검사 있다면 1반환-->
+    <entry key="isMemberAlreadyInReservation">
+        SELECT 1 as "result" FROM reservation WHERE member_id = ? FETCH FIRST 1
+        ROWS ONLY
+    </entry>
+
+    <entry key="joinMyReservationInfo">
+        select RESERVATION_ID,M.MEMBER_ID,
+        C.CONCERT_ID,
+        MY_SEAT,
+        RESERVATION_DATE,
+        CANCELLED_DATE,
+        M.NAME as
+        "USER_NAME",
+        AGE,JOIN_DATE,
+        C.name as "CONCERT_NAME",
+        GENRE,ACCESS_AGE
+        from reservation R join member M
+        on M.member_id=R.member_id
+        join concert C
+        on C.concert_id=R.concert_id
+        where M.member_id=?
+    </entry>
 
 
 </properties>

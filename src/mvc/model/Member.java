@@ -22,6 +22,14 @@ public class Member {
         this.concert = null;
     }
 
+    public Member(int memberId, String name, int age, Date joinDate) {
+        this.memberId = memberId;
+        this.name = name;
+        this.age = age;
+        this.joinDate = joinDate;
+        this.concert = null;
+    }
+
     public Date getJoinDate() {
         return joinDate;
     }

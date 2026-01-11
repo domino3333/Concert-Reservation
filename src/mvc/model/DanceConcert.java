@@ -4,8 +4,6 @@ import mvc.model.genre.ConcertGenre;
 
 public class DanceConcert extends Concert {
 
-	
-
 
 	public DanceConcert() {
 		this(null,null,0);
@@ -27,14 +25,4 @@ public class DanceConcert extends Concert {
 	public String toString() {
 		return super.toString() + "\n   연령 제한: " + accessAge+"\n"+" --------------------------";
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

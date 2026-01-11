@@ -34,12 +34,16 @@ public class DisplayUtil {
         }
     }
 
-    public void dottedLine() {
+    public void shortDottedLine() {
         System.out.println("------------------------------");
     }
 
-    public void solidLine() {
+    public void shortSolidLine() {
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    }
+    public void longDottedLine(){
+        System.out.println("-------------------------------------------------------------------------------------------------------");
+
     }
 
     public void selectMenuView() {
@@ -65,19 +69,11 @@ public class DisplayUtil {
         System.out.println("=========="+miniTitle+"==========");
     }
     public void resultBottomSeparator() {
-        System.out.println("==============================");
+        System.out.println("=============================");
     }
 
     public void printMessage(String s) {
         System.out.println(s);
     }
-
-
-
-
-
-
-
-
 
 }

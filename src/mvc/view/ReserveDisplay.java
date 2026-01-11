@@ -2,7 +2,6 @@ package mvc.view;
 
 import mvc.controller.ReservationController;
 import mvc.model.Concert;
-import mvc.run.Run;
 import mvc.service.ConcertService;
 import mvc.util.DisplayUtil;
 
@@ -59,9 +58,9 @@ public class ReserveDisplay extends DisplayUtil {
 	public void seatDisplay() {
 		// 좌석 화면 보여주기
 		System.out.println();
-		super.dottedLine();
+		super.shortDottedLine();
 		super.mainTitleText("현재 좌석 현황");
-		super.dottedLine();
+		super.shortDottedLine();
 		System.out.println(" □ : 사용 가능");
 		System.out.println(" ■ : 사용 불가");
 		System.out.println();
@@ -95,8 +94,19 @@ public class ReserveDisplay extends DisplayUtil {
 	}
 
 	public void displayConcertList() {
+		System.out.printf("%-5s %-15s %-10s %-10s%n",
+				"번호", "이름", "장르", "관람가");
+
+		super.longDottedLine();
 		for (int i = 0; i < concertList.size(); i++) {
-			System.out.println("         🎙  " + i + "번  🎙\n" + "\n" + concertList.get(i).toString());
+			Concert c = concertList.get(i);
+
+			System.out.printf("%-5d %-15s %-10s %-10s%n",
+					i,
+					c.getName(),
+					c.getGenre(),
+					c.getAccessAge()
+			);
 		}
 	}
 
